@@ -6,12 +6,14 @@ from sqlalchemy.orm import Session
 from database.models import Todos
 from starlette import status
 from todo_app.request import TodoRequest
+from todo_app.routers import auth
 
 app = FastAPI()
 
 # it creates my database tables
 models.Base.metadata.create_all(bind=engine)
 
+app.include_router(auth.router)
 
 def get_db():
     db = SessionLocal()
