@@ -10,13 +10,10 @@ from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError
 from datetime import timedelta, datetime
 
-router = APIRouter(
-    prefix='/auth',
-    tags=['auth']
-)
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 SECRET_KEY = "jkhbILbl98JGH9788756976KLJHbj8705786KJGujy0875807"
 ALGORITHM = "HS256"
@@ -50,16 +47,20 @@ def create_access_token(username: str, user_id: int, expires_delta: timedelta):
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-async def get_currrent_user(token=Annotated[str, Depends(oauth2_bearer)]):
+async def get_currrent_user(token: Annotated[str, Depends(oauth2_bearer)]):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str =  payload.get('sub')
-        user_id: int = payload.get('id')
+        username: str = payload.get("sub")
+        user_id: int = payload.get("id")
         if username is None or user_id is None:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not validated user')
-        return {'username': username, 'id': user_id}
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Not validated user"
+            )
+        return {"username": username, "id": user_id}
     except JWTError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not validated user')
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not validated user"
+        )
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
@@ -84,8 +85,10 @@ async def login_for_acess_token(
 ):
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not validated user')
-    
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not validated user"
+        )
+
     token = create_access_token(user.username, user.id, timedelta(minutes=20))
 
-    return {'access_token': token, 'token_type' :'bearer'}
+    return {"access_token": token, "token_type": "bearer"}
