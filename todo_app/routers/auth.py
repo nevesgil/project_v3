@@ -39,7 +39,9 @@ def authenticate_user(username: str, password: str, db):
     return user
 
 
-def create_access_token(username: str, user_id: int, role: str, expires_delta: timedelta):
+def create_access_token(
+    username: str, user_id: int, role: str, expires_delta: timedelta
+):
     encode = {"sub": username, "id": user_id, "role": role}
     expires = datetime.utcnow() + expires_delta
     encode.update({"exp": expires})
@@ -90,6 +92,8 @@ async def login_for_acess_token(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Not validated user"
         )
 
-    token = create_access_token(user.username, user.id, user.role, timedelta(minutes=20))
+    token = create_access_token(
+        user.username, user.id, user.role, timedelta(minutes=20)
+    )
 
     return {"access_token": token, "token_type": "bearer"}

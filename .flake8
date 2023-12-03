@@ -1,0 +1,2 @@
+[flake8]
+exclude = .git,.gitignore,__pycache__,.env3
