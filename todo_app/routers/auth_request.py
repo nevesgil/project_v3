@@ -8,6 +8,7 @@ class CreateUserRequest(BaseModel):
     last_name: str
     password: str
     role: str
+    phone_number: str
 
     class Config:
         json_schema_extra = {
@@ -18,6 +19,7 @@ class CreateUserRequest(BaseModel):
                 "last_name": "doe",
                 "password": "mypassword",
                 "role": "admin",
+                "phone_number": "00000000",
             }
         }
 
